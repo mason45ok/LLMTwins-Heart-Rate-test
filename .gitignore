@@ -169,3 +169,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+heart-rate-token.json
