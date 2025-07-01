@@ -7,7 +7,19 @@ from gspread_dataframe import get_as_dataframe
 from langchain.tools import tool
 import pandas as pd
 import pytz
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 from openai import OpenAI
+=======
+import os
+
+url = os.getenv("URL")
+>>>>>>> Stashed changes
+=======
+import os
+
+url = os.getenv("URL")
+>>>>>>> Stashed changes
 
 def read_google_sheet_heart_rate()-> Dict:
     """讀取heart-rate在google sheet中的數值"""
@@ -19,7 +31,15 @@ def read_google_sheet_heart_rate()-> Dict:
             scopes=scopes
         )
         client = gspread.authorize(creds)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         sheet_url = "https://docs.google.com/spreadsheets/d/1QIhbqeoSqV1DE7FwmkWYqAYrFT-vh9B5bfh6lXosdMo/edit?usp=sharing"
+=======
+        sheet_url = url
+>>>>>>> Stashed changes
+=======
+        sheet_url = url
+>>>>>>> Stashed changes
         sheet = client.open_by_url(sheet_url).get_worksheet(0)
         return sheet
     except Exception as e:
@@ -51,6 +71,8 @@ def Read_info(sheet):
     abnormal_data = pd.concat([abnormal_heart_rate, abnormal_blood_oxygen]).drop_duplicates()
     abnormal_data["time"] = abnormal_data["time"].astype(str)
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     result_dict = abnormal_data.to_dict(orient="records")
     print("異常數據字典：")
     print(result_dict)
@@ -91,13 +113,42 @@ def llm_handle(info: dict) -> str:
     except Exception as e:
         print(f"LLM 處理錯誤: {str(e)}")
         return None, 0.0
+=======
+=======
+>>>>>>> Stashed changes
+    # **轉換為 JSON**
+    result_json = abnormal_data.to_dict(orient="records")
+    json_output = json.dumps(result_json, ensure_ascii=False, indent=2)
+
+    print("異常數據 JSON：")
+    print(json_output)
+
+    return json_output
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
 #tool設定再編輯
 @tool
 def heart_rate_tool(prompt: str) -> str:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     """獲得心律及血氧的異常數據或檢查心律監測設備的狀態"""
     prompt = prompt.strip()
     sheet = read_google_sheet_heart_rate()
     result_dict = Read_info(sheet)
     output = llm_handle(result_dict)
     return str(output)
+=======
+    """獲得心律及血氧的異常數據"""
+    sheet = read_google_sheet_heart_rate()
+    output = Read_info(sheet)
+    return output
+>>>>>>> Stashed changes
+=======
+    """獲得心律及血氧的異常數據"""
+    sheet = read_google_sheet_heart_rate()
+    output = Read_info(sheet)
+    return output
+>>>>>>> Stashed changes

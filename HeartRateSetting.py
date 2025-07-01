@@ -5,7 +5,10 @@ import pandas as pd
 from gspread_dataframe import get_as_dataframe
 import pytz
 import json
+import os
 
+url = os.getenv("URL")
+Authorization = os.getenv("Authorization")
 
 #時間紀錄
 def time_label(worksheet):
@@ -49,11 +52,11 @@ def time_label(worksheet):
         abnormal_heart_rate = df[(df["heart-rate"] > 120) | (df["heart-rate"] < 60) | (df["heart-rate"].isna())]
         abnormal_blood_oxygen = df[(df["blood-oxygen"] < 85) | (df["blood-oxygen"].isna())]
 
-        # **合併異常資料**
+        # 合併異常資料
         abnormal_data = pd.concat([abnormal_heart_rate, abnormal_blood_oxygen]).drop_duplicates()
         abnormal_data["time"] = abnormal_data["time"].astype(str)
 
-        # **轉換為 JSON**
+        # 轉換為 JSON
         result_json = abnormal_data.to_dict(orient="records")
         json_output = json.dumps(result_json, ensure_ascii=False, indent=2)
 
@@ -72,7 +75,7 @@ def setup_google_sheet():
     :return: worksheet 對象
     """
     credentials_file = 'heart-rate-token.json'
-    sheet_url = "https://docs.google.com/spreadsheets/d/1QIhbqeoSqV1DE7FwmkWYqAYrFT-vh9B5bfh6lXosdMo/edit?usp=sharing"
+    sheet_url = url
     worksheet_index=0
     
     gc = gspread.service_account(filename=credentials_file)
@@ -91,7 +94,7 @@ def update_blood_oxygen_value(worksheet):
     """
     api_url = "https://e2live.duckdns.org:8155/api/states/sensor.spo2_2be1"
     headers = {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2Mjk0NmMzNjI2Nzc0YzJkOTkxZWFjYjk1NjkxZjgzZCIsImlhdCI6MTcxODc2Mzg5NywiZXhwIjoyMDM0MTIzODk3fQ.gq-oyg7bog6-1l8UW7QSiqTnQXzxrs0WbbE5qwIMaxI"
+    "Authorization": Authorization
     }
     column_name = "blood-oxygen"
     # 發送 GET 請求
@@ -131,7 +134,7 @@ def update_heart_rate_value(worksheet):
     """
     api_url = "https://e2live.duckdns.org:8155/api/states/sensor.heart_rate_2be1"
     headers = {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2Mjk0NmMzNjI2Nzc0YzJkOTkxZWFjYjk1NjkxZjgzZCIsImlhdCI6MTcxODc2Mzg5NywiZXhwIjoyMDM0MTIzODk3fQ.gq-oyg7bog6-1l8UW7QSiqTnQXzxrs0WbbE5qwIMaxI"
+    "Authorization": Authorization
     }
     column_name = 'heart-rate'
     # 發送 GET 請求
